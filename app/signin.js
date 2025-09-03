@@ -3,7 +3,7 @@ import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-nativ
 import { TextInput } from "react-native-web";
 import { colors } from "../theme/colors";
 
-export default function Signup () {
+export default function Signin () {
     return (
         <View style={styles.wrapper}>
             {/* header group */}
@@ -59,7 +59,7 @@ export default function Signup () {
             {/* bottom group */}
              <View style={styles.footer}>
                 <Link href="/about" style={styles.footerLink}>About copreneur</Link>
-                <Link href="/about" style={styles.footerLink}>Home</Link>
+                <Link href="/about" style={styles.footerLink}>Abot copr</Link>
              </View>
 
         </View>

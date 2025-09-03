@@ -3,13 +3,13 @@ import Entypo from '@expo/vector-icons/Entypo';
 import Feather from "@expo/vector-icons/Feather";
 import Foundation from '@expo/vector-icons/Foundation';
 import { Tabs } from "expo-router";
-import { colors } from "../../theme/color";
+import { colors } from "../../theme/colors";
 
 
 
 export default function Layout () { 
     return (
-        <Tabs screenOptions={{ tabBarActiveTintColor: colors.brown300}}>
+        <Tabs screenOptions={{ tabBarActiveTintColor: colors.brown400}}>
             <Tabs.Screen
             name="index"
             options={{
