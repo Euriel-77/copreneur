@@ -1,6 +1,7 @@
-export  const colors = {
-    brown400: "B87C4C",
-    brown300: "EBD9D1",
-    brown200: "F7F4EA",
-    brown100: "A8BBA3",
+
+export const colors = {
+    brown400: "#493628",
+    brown300: "#AB886D",
+    brown200: "#D6C0B3",
+    brown100: "#E4E0E1"
 }
