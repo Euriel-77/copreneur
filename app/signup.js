@@ -1,12 +1,31 @@
 import { Link } from "expo-router";
-import { useState } from "react";
+import { useFormik } from "formik";
 import { Image, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import * as yup from "yup";
 import { colors } from "../theme/colors";
 
+const validationRules = yup.object({
+    email: yup.string().email().required(),
+    password: yup.string()
+    .min(8, "Password must be at least 8 characters long.")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter.")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter.")
+    .matches(/\d/, "Password must contain at least one number.")
+    .matches(/[!@#$%^&*]/, "Password must contain at least one special character.")
+    .required("Password is required"),
+    passwordConfirmation: yup.string().required().oneOf([yup.ref("password"),null])
+});
+
 export default function Signup () {
-    const[email,setEmail] = useState("");
-    const[password,setPassword] = useState("");
-    const[passwordConfirmation,setPasswordConfirmation] = useState("");
+    const { handleBlur, handleChange, handleSubmit,touched, errors, values} = useFormik({
+        initialValues: { email:"", password:"", passwordConfirmation:""},
+        onSubmit: () => {
+            console.log("form was submited")
+        }
+        
+    });
+
+    console.log(values.email,"<<<<")
 
     return (
         <KeyboardAvoidingView
@@ -47,41 +66,50 @@ export default function Signup () {
                     </View>
 
                     {/* create account with email and password */}
-                    <View style={styles.emailSec}>
-                        <TextInput
+                    <View style={styles.form}>
+                       <View style={styles.inputBlock}>
+                         <TextInput
                         keyboardType="email-address"
                         style={styles.input}
                         placeholder="eg. johndoe@example.com"
-                        value={email}
-                        />
+                        value={values.email}
+                       onChangeText={handleChange("email")}
+                       onBlur={handleBlur("email")} 
+                       />
+                       {errors.email && touched.email &&
+                       <Text style={styles.errormsg}>{errors.email}</Text>}
+                       </View>
 
-                        <TextInput
-                        keyboardType="default"
-                        style={styles.input}
-                        placeholder="create password"
-                        value={password}
-                        onChangeText={(text) => setPassword(text)}/>
+                       <View>
+                            <TextInput
+                            secureTextEntry={true}
+                            keyboardType="default"
+                            style={styles.input}
+                            placeholder="create password"
+                            value={values.password}
+                            onChangeText={handleChange("password")}
+                            onBlur={handleBlur("password")}
+                            />
+                            {errors.password && touched.password &&
+                            <Text style={styles.errormsg}>{errors.password}</Text>}
+                       </View>
 
-                        {password.length >= 8 &&
+                        {!errors.password && touched.password &&
+                        <View>
                         <TextInput
+                         secureTextEntry={true}
                         keyboardType="default"
                         style={styles.input}
                         placeholder="confirm password"
-                        value={passwordConfirmation}
-                        onChangeText={(text) => setPasswordConfirmation(text)}/>
-                        }
-
-                        {password.length >= 8 && password == passwordConfirmation && 
-                        <TouchableOpacity style={styles.signInBtn}>
-                            <Image
-                            style={{
-                                width: 36,
-                                height: 36,
-                            }}
-                            source={require("../assets/images/google.png")}/>
-                            <Text style={styles.signInText}>Google</Text>
-                        </TouchableOpacity>
-                    }
+                        value={values.passwordConfirmation}
+                        onChangeText={handleChange("passwordConfirmation")}/>
+                        </View>}
+                        
+                        {errors.passwordConfirmation && touched.passwordConfirmation &&
+                        <TouchableOpacity onPress={handleSubmit} style={styles.signInBtn}>
+                            <Text style={styles.signInText}>Create Account</Text>
+                        </TouchableOpacity> }
+                    
 
                     </View>
 
@@ -192,8 +220,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.brown300
    },
-   emailSec: {
-    gap: 8
+   form: {
+    gap: 12
    },
    input: {
     borderWidth: 1,
@@ -201,5 +229,10 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     fontSize: 16,
     paddingHorizontal: 6
+   },
+   errormsg: {
+    color: "red",
+    fontSize: 12,
    }
+
 });
