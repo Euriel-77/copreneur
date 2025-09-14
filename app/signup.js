@@ -1,31 +1,62 @@
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { createUserWithEmailAndPassword, getAuth, updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { useFormik } from "formik";
-import { Image, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import * as yup from "yup";
+import { useState } from "react";
+import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { colors } from "../theme/colors";
+import { signupValidation } from "../utils/signup-validation-schema";
+import { auth, db } from "./config/firebase.secret";
 
-const validationRules = yup.object({
-    email: yup.string().email().required(),
-    password: yup.string()
-    .min(8, "Password must be at least 8 characters long.")
-    .matches(/[A-Z]/, "Password must contain at least one uppercase letter.")
-    .matches(/[a-z]/, "Password must contain at least one lowercase letter.")
-    .matches(/\d/, "Password must contain at least one number.")
-    .matches(/[!@#$%^&*]/, "Password must contain at least one special character.")
-    .required("Password is required"),
-    passwordConfirmation: yup.string().required().oneOf([yup.ref("password"),null])
-});
 
 export default function Signup () {
+    const [isLoading,setIsLoading] = useState(false);
+    const authenticated =getAuth()
+
+    const router = useRouter();
+
     const { handleBlur, handleChange, handleSubmit,touched, errors, values} = useFormik({
-        initialValues: { email:"", password:"", passwordConfirmation:""},
-        onSubmit: () => {
-            console.log("form was submited")
-        }
+        initialValues: { email:"",firstName:"",lastName:"",phoneNumber:"", password:"", passwordConfirmation:""},
+        onSubmit: async () => {
+            setIsLoading(true);
+
+            try {
+                // create a new user account
+                const user = await createUserWithEmailAndPassword(auth,values.email,values.password);
+               
+                setIsLoading(false); // stops ActivityIndicator
+
+                //update user's profile
+                updateProfile(authenticated.currentUser,{
+                    displayName: `${values.firstName} ${values.lastName}`,
+                });
+
+                //store user's data on database
+                setDoc(doc(db,"users",authenticated.currentUser.uid),{
+                    email:values.email,
+                    firstName:values.firstName,
+                    lastName:values.lastName,
+                    phoneNumber:values.phoneNumber,
+                    createAt: new Date().getTime()
+                });
+                console.log(user);
+                //redirect tohome
+                router.replace("/(tabs)");
+            } catch (error) {
+                Alert.alert(
+                    "Messge",
+                    "An unknown error has occured",
+                    [{ text: "Dismiss"}]
+                );
+                console.error(error);
+                setIsLoading(false);
+            }
+        },
+        validationSchema: signupValidation
         
     });
 
-    console.log(values.email,"<<<<")
+
 
     return (
         <KeyboardAvoidingView
@@ -37,6 +68,7 @@ export default function Signup () {
                 contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled" // This helps to dismiss the keyboard when tapping outside of inputs
                 >
+
                 {/* header group */}
                 <View style={styles.header}>
                     <Text style={styles.brandName}>Copreneur</Text>
@@ -67,6 +99,7 @@ export default function Signup () {
 
                     {/* create account with email and password */}
                     <View style={styles.form}>
+
                        <View style={styles.inputBlock}>
                          <TextInput
                         keyboardType="email-address"
@@ -78,6 +111,45 @@ export default function Signup () {
                        />
                        {errors.email && touched.email &&
                        <Text style={styles.errormsg}>{errors.email}</Text>}
+                       </View>
+
+                       <View>
+                         <TextInput
+                        keyboardType="default"
+                        style={styles.input}
+                        placeholder="eg. john"
+                        value={values.firstName}
+                       onChangeText={handleChange("firstName")}
+                       onBlur={handleBlur("firstName")} 
+                       />
+                       {errors.phoneNumber && touched.phoneNumber &&
+                       <Text style={styles.errormsg}>{error.phoneNumber}</Text>}
+                       </View>
+
+                       <View>
+                         <TextInput
+                        keyboardType="default"
+                        style={styles.input}
+                        placeholder="eg. Doe"
+                        value={values.lastName}
+                       onChangeText={handleChange("lastName")}
+                       onBlur={handleBlur("lastName")} 
+                       />
+                       {errors.firstName && touched.firstName &&
+                       <Text style={styles.errormsg}>{error.firstName}</Text>}
+                       </View>
+
+                       <View>
+                         <TextInput
+                        keyboardType="phone-pad"
+                        style={styles.input}
+                        placeholder="eg. 09040207733"
+                        value={values.phoneNumber}
+                       onChangeText={handleChange("phoneNumber")}
+                       onBlur={handleBlur("phoneNumber")} 
+                       />
+                       {errors.firstName && touched.firstName &&
+                       <Text style={styles.errormsg}>{error.firstName}</Text>}
                        </View>
 
                        <View>
@@ -105,10 +177,12 @@ export default function Signup () {
                         onChangeText={handleChange("passwordConfirmation")}/>
                         </View>}
                         
-                        {errors.passwordConfirmation && touched.passwordConfirmation &&
+                       
                         <TouchableOpacity onPress={handleSubmit} style={styles.signInBtn}>
-                            <Text style={styles.signInText}>Create Account</Text>
-                        </TouchableOpacity> }
+                            {isLoading ?
+                            <ActivityIndicator size="large" color="white"/> : 
+                            <Text style={styles.signInText}>Create Account</Text>}
+                        </TouchableOpacity> 
                     
 
                     </View>
@@ -116,7 +190,7 @@ export default function Signup () {
                     {/* already have an account? */}
                     <View style={styles.already}>
                         <Text style={styles.alreadyText}>Already have an account?</Text>
-                        <Link href="/signin" style={styles.alreadyLink}>Go to sign in</Link>
+                        <Link href="/signin" style={styles.alreadyLink}>Sign in </Link>
                     </View>
                 </View>
 
