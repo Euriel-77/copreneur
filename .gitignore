@@ -39,4 +39,5 @@ yarn-error.*
 app-example
 
 #firebase
-*.secret.js
+/secret
+

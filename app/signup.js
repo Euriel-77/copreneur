@@ -4,9 +4,9 @@ import { doc, setDoc } from "firebase/firestore";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { auth, db } from "../secrets/firebase";
 import { colors } from "../theme/colors";
 import { signupValidation } from "../utils/signup-validation-schema";
-import { auth, db } from "./config/firebase.secret";
 
 
 export default function Signup () {

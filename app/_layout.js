@@ -19,22 +19,20 @@ export default function RootLayout() {
             headerShown: false,
           }}/>
           :
-        <Stack.Screen
-          name="signup"
-          options={{
-            title: "Create a new account",
-            headerShown: false,
-          }}/>
-          }
-
-        
-
-        <Stack.Screen
+           <Stack.Screen
         name="index"
         options={{
           title: "Welcome",
           headerShown: false,
         }}/>
+      }
+
+      <Stack.Screen
+          name="signup"
+          options={{
+            title: "Create a new account",
+            headerShown: false,
+          }}/>
 
       <Stack.Screen
         name="about"
