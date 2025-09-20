@@ -46,6 +46,13 @@ export default function RootLayout() {
             title: "Welcome",
             headerShown: false,
           }}/>
+        
+        <Stack.Screen
+          name="create"
+          options={{
+            title: "Create a post",
+            headerShown: false,
+          }}/>
       </Stack> 
     </AuthProvider>  
   );
