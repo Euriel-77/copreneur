@@ -5,7 +5,6 @@ import "./global.css";
 
 export default function RootLayout() {
   const { user } = useContext(AuthContext);
-  console.log(">>>FROM ROOTLAYOUT<<<<",user)
 
   return (
     <AuthProvider>
@@ -13,42 +12,40 @@ export default function RootLayout() {
         {user !== undefined ? 
         
         <Stack.Screen
-          name= "(tabs)"
+          name="(tabs)"
           options={{
             title: "Home",
             headerShown: false,
           }}/>
           :
-           <Stack.Screen
-        name="index"
-        options={{
-          title: "Welcome",
-          headerShown: false,
-        }}/>
-      }
-
-      <Stack.Screen
-          name="signup"
+          <Stack.Screen
+          name="signin"
           options={{
-            title: "Create a new account",
+            title: "Sign in",
             headerShown: false,
           }}/>
+        }
 
-      <Stack.Screen
+        <Stack.Screen
+        name="signup"
+        options={{
+          title: "Create a new account",
+          headerShown: false,
+        }}/>
+
+        <Stack.Screen
         name="about"
         options={{
           title: "About copreneur",
           headerShown: false,
         }}/>
 
-      <Stack.Screen
-        name="signin"
-        options={{
-          title: "Sign in",
-          headerShown: false,
-        }}/>
-      
-
+        <Stack.Screen
+          name="index"
+          options={{
+            title: "Welcome",
+            headerShown: false,
+          }}/>
       </Stack> 
     </AuthProvider>  
   );
