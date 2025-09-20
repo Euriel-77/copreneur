@@ -1,6 +1,7 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
 import Feather from "@expo/vector-icons/Feather";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Foundation from '@expo/vector-icons/Foundation';
 import { Tabs } from "expo-router";
 import { colors } from "../../theme/colors";
@@ -25,6 +26,15 @@ export default function Layout () {
                 title: "Find",
                 headerShown: false,
                 tabBarIcon: ({color}) => (<Entypo name="compass" size={24} color={color} />)
+            }}
+            />
+           
+            <Tabs.Screen
+            name="create"
+            options={{
+                title: "create",
+                headerShown: false,
+                tabBarIcon: ({color}) => (<FontAwesome name="plus-circle" size={24} color={color} />)
             }}
             />
 
