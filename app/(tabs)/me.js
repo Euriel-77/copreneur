@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { AuthContext } from "../../config/auth-context.config";
-import { auth, db } from "../../settings/firebase";
+import { auth, db } from "../../fbsettings/firebase";
 import { colors } from "../../theme/colors";
 
 export default function Index () {
