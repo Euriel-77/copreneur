@@ -1,24 +1,43 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "expo-router";
+import { addDoc, collection } from "firebase/firestore";
 import { useFormik } from "formik";
 import { useContext, useState } from "react";
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { AuthContext } from "../../config/auth-context.config";
+import { db } from "../../fbsettings/firebase";
 import { colors } from "../../theme/colors";
 
 export default function Create () {
     const [isLoading,setIsLoading] = useState(false);
     const { user } = useContext(AuthContext);
 
-    const { handleBlur, handleChange, handleSubmit,touched, errors, values} = useFormik({
+    const router =useRouter()
+
+    const { handleBlur, handleChange, handleSubmit,touched, errors, values, resetForm} = useFormik({
         initialValues: { content:""},
         onSubmit: async () => {
             setIsLoading(true);
 
             try {
                 // create post on validation
-                const user = await createUserWithEmailAndPassword(auth,values.email,values.password);
-               
+                await addDoc(collection(db,"posts"),{
+                    text: values.content,
+                    createdAt: new Date().getTime(),
+                    author:user.uid,
+                    likes: 0,
+                });
+                
                 setIsLoading(false); // stops ActivityIndicator
+                requestFormReset();//clears all fields
+
+                Alert.alert(
+                    "Notification",
+                    "Post published !",
+                    [
+                        { text: "Dismiss",},
+                        { text: "back to home",onPress: () => router.replace("(tabs)")}
+                    ]
+                )
             }catch (error) {
                 Alert.alert(
                     "Message",
@@ -49,7 +68,8 @@ export default function Create () {
                
                      {/* body group  */}
                     <View style={styles.body}>
-                     <Text style={styles.bodyText}>What do you want to share?</Text>
+                        <Text className="font-bold text-lg">Hello, {user.displayName}</Text>
+                        <Text style={styles.bodyText}>What do you want to share?</Text>
 
                         {/* create account with email and password */}
                         <View style={styles.form}>
@@ -66,13 +86,13 @@ export default function Create () {
                                 <Text style={styles.errormsg}>{errors.content}</Text>}
                             </View>
 
-                    
-                            <TouchableOpacity onPress={handleSubmit} style={styles.signInBtn}>
-                                {isLoading ?
-                                <ActivityIndicator size="large" color={{styles:styles.brown100}}/> : 
-                                <Text style={styles.signInText}>Create</Text>}
-                            </TouchableOpacity> 
-                            
+                            <View className="flex flex-row justify-end">
+                                <TouchableOpacity onPress={handleSubmit} style={styles.signInBtn}>
+                                    {isLoading ?
+                                    <ActivityIndicator size="large" color={{styles:styles.brown100}}/> : 
+                                    <Text style={styles.signInText}>Create</Text>}
+                                </TouchableOpacity> 
+                            </View>    
 
                         </View>
                     </View>
@@ -82,60 +102,47 @@ export default function Create () {
 }
 
 const styles = StyleSheet.create({
-   wrapper: {
-    flex: 1,
-    display: "flex",
-    justifyContent: "space-between",
-    paddingTop: StatusBar.currentHeight,
-    paddingBottom: 40,
-   }, 
-    scrollContent: {
-    flexGrow: 1,
-    justifyContent: "space-between",
-    paddingTop: StatusBar.currentHeight,
-    paddingBottom: 40,
+       wrapper: {
+        flex: 1,
+        paddingTop: StatusBar.currentHeight,
+    },
+    ScrollViewContainer: {
+        flexGrow: 1,
+        justifyContent: "space-between",
+        marginBottom: 40,
     },
     body: {
-    display: "flex",
-    gap: 18,
-    paddingHorizontal: 20,
-   },
-   bodyText: {
-    color: colors.brown400,
-    fontSize: 18
-   },
-   signInBtn: {
-    height: 56,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 16,
-    backgroundColor: colors.brown400,
-    borderRadius: 4
-   },
-   signInText: {
-    color: colors.brown100,
-    fontSize: 22
-   },
-   line: {
-    width: "30%",
-    borderTopWidth: 1,
-    borderTopColor: colors.brown300
-   },
-   form: {
-    gap: 12
-   },
-   input: {
-    borderWidth: 1,
-    borderColor: colors.brown400,
-    borderRadius: 4,
-    fontSize: 16,
-    paddingHorizontal: 6
-   },
-   errormsg: {
-    color: "red",
-    fontSize: 12,
-   }
+        display: "flex",
+        gap: 18,
+        paddingHorizontal: 20,
+    },
+    bodyText: {
+        color: colors.brown400,
+        fontSize: 18
+    },
+    signupBtn: {
+        padding: 6,
+        backgroundColor: colors.brown400,
+        borderRadius: 4,
+
+    },
+    signInText: {
+        color: colors.brown100,
+        fontSize: 22,
+    },
+    form: {
+        gap: 12,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: colors.brown400,
+        borderRadius: 4,
+        fontSize: 16,
+        paddingHorizontal: 6,
+    },
+    errormsg: {
+        color: "red",
+        fontSize: 12
+    }
 
 });

@@ -19,9 +19,9 @@ export default function RootLayout() {
           }}/>
           :
           <Stack.Screen
-          name="signin"
+          name="index"
           options={{
-            title: "Sign in",
+            title: "Welcome",
             headerShown: false,
           }}/>
         }
@@ -41,11 +41,12 @@ export default function RootLayout() {
         }}/>
 
         <Stack.Screen
-          name="index"
-          options={{
-            title: "Welcome",
-            headerShown: false,
-          }}/>
+        name="signin"
+        options={{
+          title: "Sign in",
+          headerShown: false,
+        }}/>
+
       </Stack> 
     </AuthProvider>  
   );
