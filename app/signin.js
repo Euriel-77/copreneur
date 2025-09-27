@@ -3,13 +3,13 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { auth } from "../fbsettings/firebase";
+import { auth } from "../settings/firebase";
 import { colors } from "../theme/colors";
 import { signinValidation } from "../utils/signin-validation-schema";
 
 
 export default function Signin () {
-    const [isLoading,setIsLoading] = useState(null);
+    const [isLoading,setIsLoading] = useState(false);
     const authenticated =getAuth();
 
     const router = useRouter();
@@ -22,7 +22,6 @@ export default function Signin () {
             try {
                 // create a new user account
                 await signInWithEmailAndPassword(auth,values.email,values.password);
-               
                 setIsLoading(false); // stops ActivityIndicator
 
               

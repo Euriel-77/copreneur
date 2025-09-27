@@ -1,4 +1,4 @@
-import AntDesign from '@expo/vector-icons/AntDesign';
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useFonts } from "expo-font";
 import { Link } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -36,7 +36,7 @@ export default function Index () {
                     <View className="flex flex-col gap-y-3">
                         {forDevelopers.map((item) => (
                         <View key={item.id} style={{ backgroundColor: colors.brown400 }} className="h-12 flex flex-row items-center gap-4 rounded-lg px-2">
-                            <AntDesign name="check-circle" size={24} color={colors.brown200}/>
+                            <AntDesign name="check-circle" size={24} color={colors.brown200} />
                             <Text className="text-lg font-semibold text-white">{item.text}</Text>
                         </View>
                     ))}
